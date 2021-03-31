@@ -115,47 +115,45 @@ def order_making(field, order):
 
 
 def game_status_checking(field, mover):
-    for i in field:
-        string_row = ""
-        for j in i:
-            string_row += str(j)
-        if string_row.count(mover) == len(field):
-            print(f"{mover} is winner!")
-            return True
+        for i in field:
+            string_row = ""
+            for j in i:
+                string_row += str(j)
+            if string_row.count(mover) == len(field):
+                print(f"{mover} is winner!")
+                return True
 
-    counter = 0
-    for a in range(len(field)):
-        string_column = ""
-        for i in range(len(field)):
-            for j in range(len(field[i])):
-                if j == counter:
-                    string_column += str(field[i][j])
-        if string_column.count(mover) == len(field):
-            print(string_column)
-            print(f"{mover} is winner!")
-            return True
+        counter = 0
+        for a in range(len(field)):
+            string_column = ""
+            for i in range(len(field)):
+                for j in range(len(field[i])):
+                    if j == counter:
+                        string_column += str(field[i][j])
+            if string_column.count(mover) == len(field):
+                print(string_column)
+                print(f"{mover} is winner!")
+                return True
         counter += 1
 
-        string_diagonal = ""
-        for i in range(len(field)):
-            for j in range(len(field[i])):
-                if j == i:
-                    string_diagonal += str(field[i][j])
-        if string_diagonal.count(mover) == len(field):
-            print(string_diagonal)
-            print(f"{mover} is winner!")
+        if diagonal_winning_checking(field, mover, lambda g: g):
+            return True
+        elif diagonal_winning_checking(field, mover, lambda g: (len(field) - 1) - g):
             return True
 
-        string_diagonal2 = ""
-        for i in range(len(field)):
-            for j in range(len(field[i])):
-                if ((len(field) - 1) - j) == i:
-                    string_diagonal2 += str(field[i][j])
-        if string_diagonal2.count(mover) == len(field):
-            print(string_diagonal2)
-            print(f"{mover} is winner!")
-            return True
 
+def diagonal_winning_checking(field, mover, rule):
+    """ Rule - sets which diagonal will be checking
+        Ex. if points where i == j - it's straight diagonal (points in 1:1,2:2,3:3 for 3x3 field)
+    """
+    string_diagonal = ""
+    for i in range(len(field)):
+        for j in range(len(field[i])):
+            if rule(j) == i:
+                string_diagonal += str(field[i][j])
+    if string_diagonal.count(mover) == len(field):
+        print(f"{mover} is winner!")
+        return True
     return False
 
 
