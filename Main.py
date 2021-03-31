@@ -97,13 +97,12 @@ def order_making(field, order):
     total_moves = len(field) * len(field[0])
     i = 1
     while i <= total_moves:
-
         if i % 2 != 0:
             print(f"now {order['first move']} is making move")
             making_a_move(field, order['first move'])
-            show_field(field)
             if game_status_checking(field, order['first move']):
                 break
+            show_field(field)
             i += 1
         else:
             print(f"now {order['second move']} is making move")
@@ -115,34 +114,42 @@ def order_making(field, order):
 
 
 def game_status_checking(field, mover):
-        for i in field:
-            string_row = ""
-            for j in i:
-                string_row += str(j)
-            if string_row.count(mover) == len(field):
-                print(f"{mover} is winner!")
-                return True
 
-        counter = 0
-        for a in range(len(field)):
-            string_column = ""
-            for i in range(len(field)):
-                for j in range(len(field[i])):
-                    if j == counter:
-                        string_column += str(field[i][j])
-            if string_column.count(mover) == len(field):
-                print(string_column)
-                print(f"{mover} is winner!")
-                return True
-        counter += 1
+    if diagonal_win_checking(field, mover, lambda g: g):
+        return True
+    elif diagonal_win_checking(field, mover, lambda g: (len(field) - 1) - g):
+        return True
+    elif row_win_checking(field, mover):
+        return True
+    elif column_win_checking(field, mover):
+        return True
 
-        if diagonal_winning_checking(field, mover, lambda g: g):
+
+def column_win_checking(field, mover):
+    counter = 0
+    for a in range(len(field)):
+        string_column = ""
+        for i in range(len(field)):
+            for j in range(len(field[i])):
+                if j == counter:
+                    string_column += str(field[i][j])
+        if string_column.count(mover) == len(field):
+            print(f"{mover} is winner!")
             return True
-        elif diagonal_winning_checking(field, mover, lambda g: (len(field) - 1) - g):
+    counter += 1
+
+
+def row_win_checking(field, mover):
+    for i in field:
+        string_row = ""
+        for j in i:
+            string_row += str(j)
+        if string_row.count(mover) == len(field):
+            print(f"{mover} is winner!")
             return True
 
 
-def diagonal_winning_checking(field, mover, rule):
+def diagonal_win_checking(field, mover, rule):
     """ Rule - sets which diagonal will be checking
         Ex. if points where i == j - it's straight diagonal (points in 1:1,2:2,3:3 for 3x3 field)
     """
