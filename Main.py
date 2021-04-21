@@ -50,7 +50,7 @@ def input_for_choosing_order(nickname):
     user_input = ""
     key = False
     while not key:
-        user_input = input(f"{nickname}, please enter number form 0 to 100: ")
+        user_input = input(f"{nickname}, please enter number form 1 to 100: ")
         if user_input.isdigit() and 0 < int(user_input) <= 100:
             user_input = int(user_input)
             key = True
@@ -137,25 +137,27 @@ def order_making(field, order: dict):
 
 
 def making_a_move(field, mover):
-    changed_field = field
-    coords = enter_coords(len(field))
-    while coords is None:
-        coords = enter_coords(len(field))
-    if changed_field[coords[0] - 1][coords[1] - 1] == 0:
-        if mover == 'X':
-            changed_field[coords[0] - 1][coords[1] - 1] = "X"
-        else:
-            changed_field[coords[0] - 1][coords[1] - 1] = "O"
-    elif changed_field[coords[0] - 1][coords[1] - 1] != 0:
-        print("There is already something.")
+    changed_field = put_symbol(field, mover)
     return changed_field
 
 
+def put_symbol(field, symbol):
+    coords = enter_coords(len(field))
+    while True:
+        if field[coords[0]][coords[1]] == 0:
+            field[coords[0]][coords[1]] = symbol
+            return field
+        elif field[coords[0]][coords[1]] != 0:
+            print("There is already something. Try gain.")
+            coords = enter_coords(len(field))
+
+
 def enter_coords(field_len):
-    coords = list(map(int, input("Enter coords via space: ").split()))
-    if coords_verification(coords, field_len):
-        print(coords)
-        return coords
+    while True:
+        coords = list(map(int, input("Enter coords via space: ").split()))
+        if coords_verification(coords, field_len):
+            coords = [coords[0] - 1, coords[1] - 1]
+            return coords
 
 
 def coords_verification(coords, field_len):
@@ -221,6 +223,9 @@ def diagonal_win(field, mover):
 
 
 if __name__ == '__main__':
+    # field1 = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    # making_a_move(field1, 'X')
+    # making_a_move(field1, 'O')
     # field1 = [['X', 'X', 'X'], [0, 0, 0], [0, 0, 0]]
     # field2 = [[0, 0, 0], ['X', 'X', 'X'], [0, 0, 0]]
     # field3 = [[0, 0, 0], [0, 0, 0], ['X', 'X', 'X']]
@@ -263,5 +268,4 @@ if __name__ == '__main__':
     # diagonal_win(field1_3, 'X')
     # print("secondary diagonal", end=' ')
     # diagonal_win(field2_3, 'X')
-    enter_coords(4)
-    # start_game()
+    start_game()
