@@ -135,35 +135,53 @@ def order_making(field, order: dict):
                 break
             i += 1
 
+
 def making_a_move(field, mover):
     changed_field = field
-    user_input = list(map(int, input("Enter coords via space: ").split()))
-    for item in user_input:
-        if item > len(changed_field[0]) or item < 1:
-            print(f"Too big number(or negative). Field is only this long {len(changed_field[0])}")
-
-    if changed_field[user_input[0] - 1][user_input[1] - 1] == 0:
+    coords = enter_coords(len(field))
+    while coords is None:
+        coords = enter_coords(len(field))
+    if changed_field[coords[0] - 1][coords[1] - 1] == 0:
         if mover == 'X':
-            changed_field[user_input[0] - 1][user_input[1] - 1] = "X"
+            changed_field[coords[0] - 1][coords[1] - 1] = "X"
         else:
-            changed_field[user_input[0] - 1][user_input[1] - 1] = "O"
-    elif changed_field[user_input[0] - 1][user_input[1] - 1] != 0:
+            changed_field[coords[0] - 1][coords[1] - 1] = "O"
+    elif changed_field[coords[0] - 1][coords[1] - 1] != 0:
         print("There is already something.")
     return changed_field
 
 
+def enter_coords(field_len):
+    coords = list(map(int, input("Enter coords via space: ").split()))
+    if coords_verification(coords, field_len):
+        print(coords)
+        return coords
+
+
+def coords_verification(coords, field_len):
+    if len(coords) != 2:
+        print("You need to enter TWO numbers.")
+        return False
+    elif (coords[0] > field_len or coords[0] < 1) or (coords[1] > field_len or coords[1] < 1):
+        print(f"Too big number(or negative). Field is only this long - {field_len}")
+        return False
+    else:
+        return True
+
+
 def game_status_checking(field, mover):
-    if diagonal_win_checking(field, mover, lambda g: g):
+    if diagonal_win(field, mover):
         return True
-    elif diagonal_win_checking(field, mover, lambda g: (len(field) - 1) - g):
+    elif diagonal_win(field, mover):
         return True
-    elif row_win_checking(field, mover):
+    elif row_win(field, mover):
         return True
-    elif column_win_checking(field, mover):
+    elif column_win(field, mover):
         return True
 
 
-def column_win_checking(field, mover):
+# Below is functions that setting a winning rules
+def column_win(field, mover):
     counter = 0
     for a in range(len(field)):
         string_column = ""
@@ -174,10 +192,10 @@ def column_win_checking(field, mover):
         if string_column.count(mover) == len(field):
             print(f"{mover} is winner!")
             return True
-    counter += 1
+        counter += 1
 
 
-def row_win_checking(field, mover):
+def row_win(field, mover):
     for i in field:
         string_row = ""
         for j in i:
@@ -187,20 +205,63 @@ def row_win_checking(field, mover):
             return True
 
 
-def diagonal_win_checking(field, mover, rule):
-    """ Rule - sets which diagonal will be checking
-        Ex. if points where i == j - it's straight diagonal (points in 1:1,2:2,3:3 for 3x3 field)
-    """
-    string_diagonal = ""
+def diagonal_win(field, mover):
+    first_diagonal = ""
+    second_diagonal = ""
     for i in range(len(field)):
         for j in range(len(field[i])):
-            if rule(j) == i:
-                string_diagonal += str(field[i][j])
-    if string_diagonal.count(mover) == len(field):
+            if j == i:
+                first_diagonal += str(field[i][j])
+            if (len(field) - 1) - j == i:
+                second_diagonal += str(field[i][j])
+    if first_diagonal.count(mover) == len(field) or second_diagonal.count(mover) == len(field):
         print(f"{mover} is winner!")
         return True
     return False
 
 
 if __name__ == '__main__':
-    start_game()
+    # field1 = [['X', 'X', 'X'], [0, 0, 0], [0, 0, 0]]
+    # field2 = [[0, 0, 0], ['X', 'X', 'X'], [0, 0, 0]]
+    # field3 = [[0, 0, 0], [0, 0, 0], ['X', 'X', 'X']]
+    # print("first row", end=' ')
+    # row_win(field1, 'X')
+    # print("second row", end=' ')
+    # row_win(field2, 'X')
+    # print("third row", end=' ')
+    # row_win(field3, 'X')
+    # print()
+
+    # field1_2 = [['X', 0, 0], ['X', 0, 0], ['X', 0, 0]]
+    # field2_2 = [[0, 'X', 0], [0, 'X', 0], [0, 'X', 0]]
+    # field3_2 = [[0, 0, 'X'], [0, 0, 'X'], [0, 0, 'X']]
+    # print("first column", end=' ')
+    # column_win(field1_2, 'X')
+    # print("second column", end=' ')
+    # column_win(field2_2, 'X')
+    # print("third column", end=' ')
+    # column_win(field3_2, 'X')
+    # print()
+    #
+    # field1_22 = [['X', 0, 0, 0], ['X', 0, 0, 0], ['X', 0, 0, 0], ['X', 0, 0, 0]]
+    # field2_22 = [[0, 'X', 0, 0], [0, 'X', 0, 0], [0, 'X', 0, 0], [0, 'X', 0, 0]]
+    # field3_22 = [[0, 0, 'X', 0], [0, 0, 'X', 0], [0, 0, 'X', 0], [0, 0, 'X', 0]]
+    # field4_22 = [[0, 0, 0, 'X'], [0, 0, 0, 'X'], [0, 0, 0, 'X'], [0, 0, 0, 'X']]
+    # print("first column", end=' ')
+    # column_win(field1_22, 'X')
+    # print("second column", end=' ')
+    # column_win(field2_22, 'X')
+    # print("third column", end=' ')
+    # column_win(field3_22, 'X')
+    # print("fourth column", end=' ')
+    # column_win(field4_22, 'X')
+    # print()
+
+    # field1_3 = [['X', 0, 0], [0, 'X', 0], [0, 0, 'X']]
+    # field2_3 = [[0, 0, 'X'], [0, 'X', 0], ['X', 0, 0]]
+    # print("main diagonal", end=' ')
+    # diagonal_win(field1_3, 'X')
+    # print("secondary diagonal", end=' ')
+    # diagonal_win(field2_3, 'X')
+    enter_coords(4)
+    # start_game()
